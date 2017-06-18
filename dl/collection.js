@@ -10,10 +10,10 @@ obj.prototype.Get = function(coll, filter) {
             database = db;
             return db.collection(coll)
         })
-        .then((users) => {
-            result2 = users.find(filter);
+        .then((coll) => {
+            let data = coll.find(filter);
             return new Promise((resolve, reject) => {
-                result2.toArray((err, docs) => {
+                data.toArray((err, docs) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -22,14 +22,21 @@ obj.prototype.Get = function(coll, filter) {
                 });
             });
         })
-        .then((result) => {
-            result2 = result;
-            console.log(result);
+        .then((docs) => {
             database.close();
-            return result;
+            let envelop = {
+                "result": docs.length != 0 ? "success" : "notsuccess",
+                "message": "",
+                "data": docs
+            }
+            return envelop;
         })
         .catch((err) => {
-            console.error(err)
+            let envelop = {
+                "result": "error",
+                "message": err
+            }
+            console.error(envelop)
         })
     return p;
 };

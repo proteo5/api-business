@@ -10,7 +10,7 @@ http.createServer(function(req, res) {
         try {
             if (err) {
                 res.statusCode = 500
-                return res.end("Bad Request")
+                return res.end(`Bad Request: ${err}`)
             }
             var entity = require(`./api/${body.version}/${body.entity}.js`);
             var action = entity[body.action];
