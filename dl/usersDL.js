@@ -2,16 +2,17 @@ const mongoose = require('./enviroment.js');
 
 var Schema = mongoose.Schema;
 
-var userSchema = new Schema({
+var usersSchema = new Schema({
     User: String,
     Names: String,
     LastNames: String,
     Password: String,
     PasswordSalt: String,
     Email: String,
+    Company: { type: Schema.Types.ObjectId, ref: 'companies' },
     IsActive: Boolean
-});
+}, { strict: false });
 
-var User = mongoose.model('User', userSchema);
+var Users = mongoose.model('users', usersSchema);
 
-module.exports = User;
+module.exports = Users;
