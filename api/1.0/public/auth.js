@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var usersDL = require('../../../dl/usersDL.js');
 var companiesDL = require('../../../dl/companiesDL.js');
 var envelopHL = require('../../../hl/envelopHL.js');
+var bcrypt = require('bcrypt');
 
 class auth {
     //params: User, Password
@@ -10,7 +11,7 @@ class auth {
             var data = await usersDL.find({ "User": params.User }).populate("Company").exec();;
             if (data.length == 0) {
                 return envelopHL.Fill(envelopHL.results.notSuccess, "User not found");
-            } else if (data[0].Password != params.Password) {
+            } else if (!bcrypt.compareSync(params.Password, data[0].Password)) {
                 return envelopHL.Fill(envelopHL.results.notSuccess, "Wrong Password");
             } else {
                 var data2 = {

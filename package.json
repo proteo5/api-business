@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/proteo5/api-business#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body": "^5.1.0",
     "eslint": "^4.0.0",
     "jsonwebtoken": "^7.4.1",

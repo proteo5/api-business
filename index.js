@@ -46,7 +46,7 @@ http.createServer(async function(req, res) {
 var security = function(body) {
     try {
         if (body.area == "public")
-            return true;
+            return { pass: true };
 
         var auth = jwt.verify(body.token, secret);
         auth.pass = true;
