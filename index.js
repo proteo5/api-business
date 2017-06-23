@@ -5,7 +5,17 @@ var http = require("http");
 global.cs = 'mongodb://docebituser:0147896325@ds127132.mlab.com:27132/docebitdb';
 
 http.createServer(function(req, res) {
-    jsonBody(req, res, function(err, body) {
+    //To overcome the CORS
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Request methods you wish to allow ( 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // Set to true if you need the website to include cookies in the requests sent to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    /************************************************************/
+    jsonBody(req, res, async function(err, body) {
         // err is probably an invalid json error 
         try {
             if (err) {
@@ -14,11 +24,10 @@ http.createServer(function(req, res) {
             }
             var entity = require(`./api/${body.version}/${body.entity}.js`);
             var action = entity[body.action];
-            var p = action(body.data);
-            p.then((result) => {
-                res.setHeader("content-type", "application/json")
-                res.end(JSON.stringify(result))
-            });
+            var result = await action(body.data);
+
+            res.setHeader("content-type", "application/json")
+            res.end(JSON.stringify(result))
 
         } catch (error) {
             res.statusCode = 500

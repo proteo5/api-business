@@ -1,16 +1,11 @@
-var callection = require('../../dl/collection.js');
-var obj = function() {};
+var usersDL = require('../../dl/usersDL.js');
 
-obj.prototype.auth = "Anonymous";
+class users {
+    async GetAll() {
+        return await usersDL.find({});
+    }
 
-obj.prototype.GetAll = function(params) {
+}
 
-    return callection.Get("users", {});
-};
 
-obj.prototype.GetByUser = function(params) {
-
-    return callection.Get("users", { "User": params.User });
-};
-
-module.exports = new obj();
+module.exports = new users;
