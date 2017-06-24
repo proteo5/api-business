@@ -1,6 +1,7 @@
-var usersDL = require('../../../dl/usersDL.js');
-var companiesDL = require('../../../dl/companiesDL.js');
-var envelopHL = require('../../../hl/envelopHL.js');
+const usersDL = require('../../../dl/usersDL.js');
+const companiesDL = require('../../../dl/companiesDL.js');
+const envelopHL = require('../../../hl/envelopHL.js');
+
 
 class users {
     async GetAll(params) {
@@ -47,6 +48,47 @@ class users {
                 params.user.IsActive = true;
 
                 var data = await usersDL.create(params.user);
+                var result = envelopHL.results.success;
+                var message = "ok";
+                return envelopHL.Fill(result, message);
+            }
+        } catch (error) {
+            return envelopHL.Fill(envelopHL.results.error, error);
+        }
+    }
+
+    async Update(params) {
+        try {
+            var query = { _id: params.query._id };
+            var data = await usersDL.update(query, params.user);
+            var result = envelopHL.results.success;
+            var message = "ok";
+            return envelopHL.Fill(result, message);
+
+        } catch (error) {
+            return envelopHL.Fill(envelopHL.results.error, error);
+        }
+    }
+
+    async ChangePassword(params) {
+        try {
+            var bcrypt = require('bcrypt');
+            var dataExist = await usersDL
+                .find({ $and: [{ "User": params.User }, { "Company": params.auth.CompanyID }] });
+            if (dataExist.length == 0) {
+                var result = envelopHL.results.notSuccess;
+                var message = "User don't exist";
+                return envelopHL.Fill(result, message);
+            } else if (!bcrypt.compareSync(params.Password, dataExist[0].Password)) {
+                return envelopHL.Fill(envelopHL.results.notSuccess, "Wrong Password");
+            } else {
+                var bcrypt = require('bcrypt');
+                var passwordSalt = bcrypt.genSaltSync(10);
+                var newPassword = bcrypt.hashSync(params.NewPassword, passwordSalt);
+
+                var query = { $and: [{ "User": params.User }, { "Company": params.auth.CompanyID }] };
+                var change = { "Password": newPassword, "PasswordSalt": passwordSalt };
+                var data = await usersDL.update(query, change);
                 var result = envelopHL.results.success;
                 var message = "ok";
                 return envelopHL.Fill(result, message);
