@@ -17,6 +17,21 @@ class users {
         }
     }
 
+    async GetByID(params) {
+        try {
+            var data = await usersDL
+                .find({ $and: [{ "_id": params.UserID }, { "Company": params.auth.CompanyID }] })
+                .select("-Password -PasswordSalt")
+                .populate("Company")
+                .exec();
+            var result = data.length !== 0 ? envelopHL.results.success : envelopHL.results.notSuccess;
+            var message = data.length !== 0 ? "ok" : "No information has been found";
+            return envelopHL.Fill(result, message, data[0]);
+        } catch (error) {
+            return envelopHL.Fill(envelopHL.results.error, error);
+        }
+    }
+
     async GetByUser(params) {
         try {
             var data = await usersDL
